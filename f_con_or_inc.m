@@ -24,6 +24,6 @@ function thispdf = f_con_or_inc(TauA,TauB,MuC,SigmaC,Lambda,RT,varargin)
             - Beta*expAlphaSOA / (Alpha+Beta*(1-expAlphaSOA)) * eg_f(1/(Alpha+Beta),MuC,SigmaC,RT);
 
     thispdf = q_s * f_plus +  (1-q_s) * f_minus;
-
+    
 end
 
