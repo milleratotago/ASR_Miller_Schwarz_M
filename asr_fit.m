@@ -25,7 +25,7 @@ function results = asr_fit(congruent_rts,incongruent_rts,soa,varargin)
     % The optional parameters all have different types so we can discriminate them that way.
     for iParm=1:numel(varargin)
         thisParm = varargin{iParm};
-        if isa(thisParm,'logical')
+        if islogical(thisParm)
             estimate_excitation = thisParm;
         elseif isfloat(thisParm)
             sigmaProps = thisParm;
@@ -79,6 +79,12 @@ function results = asr_fit(congruent_rts,incongruent_rts,soa,varargin)
         end
     end
 
+    % eg_neglnlikelihood uses abs() of these parms:
+    holdparms(:,1) = abs(holdparms(:,1));  % tauA
+    holdparms(:,2) = abs(holdparms(:,2));  % tauB
+    holdparms(:,3) = abs(holdparms(:,3));  % mu
+    holdparms(:,4) = abs(holdparms(:,4));  % sigma
+    
     % See which fminsearch gave the best overall results
     [minbest, minpos] = min(holdbest);
 
