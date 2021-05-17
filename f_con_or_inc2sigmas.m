@@ -1,6 +1,6 @@
 function thispdf = f_con_or_inc2sigmas(TauA,TauB,MuC,SigmaCab,Lambda,SigmaCba,RT,varargin)
     % PDF(s) of RT_con(s) or RT_inc(s) for a given set of parameter values.
-    % SigmaCab is sigma of stage C when a finishes before b, and SigmaCba is opposite.
+    % SigmaCab is sigma of stage C when a finishes before b, and SigmaCba with ba finishing order.
     % Lambda should be positive for inc and negative for con
     % Optional parameter in varargin is SOA; assume 0 if not used.
 
