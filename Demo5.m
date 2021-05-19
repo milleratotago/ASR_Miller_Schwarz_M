@@ -34,3 +34,11 @@ errrtsinc = rtsinc( errcodesinc);
 errfun = @(x) corerreg_neglnlikelihood(x,corrtscon,corrtsinc,errrtscon,errrtsinc);
 options = optimset('Display','iter');
 [holdparms, holdbest] = fminsearch(errfun,parm,options);
+
+%% Here is a more sophisticated routine analogous to asr_fit:
+
+% one sigma, lambda_Excitation is NOT allowed to vary:
+results_no_excitation = asr_fit_corerr(corrtscon,corrtsinc,errrtscon,errrtsinc,SOA);
+
+% one sigma, lambda_Excitation is allowed to vary:
+
