@@ -107,7 +107,7 @@ function results = asr_fit(congruent_rts,incongruent_rts,soa,varargin)
         holdparms(:,6) = abs(holdparms(:,6));  % sigmaCexc
         holdparms(:,8) = abs(holdparms(:,8));  % sigmaCinh
     elseif ~estimate_excitation && TwoSigmas
-        holdparms(:,6) = abs(holdparms(:,6));  % sigmaCexc
+        holdparms(:,6) = abs(holdparms(:,6));  % sigmaCinh
     end
     
     % See which fminsearch gave the best overall results

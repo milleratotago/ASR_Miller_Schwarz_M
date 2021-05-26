@@ -124,9 +124,7 @@ function results = asr_fit_corerr(corcongruent_rts,corincongruent_rts,errcongrue
         holdparms(:,6) = abs(holdparms(:,6));  % sigmaCexc
     end
     % map the three real PC parms back to 0/1:
-    holdparms(:,end-2) = maprto01(holdparms(:,end-2));
-    holdparms(:,end-1) = maprto01(holdparms(:,end-1));
-    holdparms(:,end) = maprto01(holdparms(:,end));
+    holdparms(:,end-2:end) = maprto01(holdparms(:,end-2:end));
     
     % See which fminsearch gave the best overall results
     [minbest, minpos] = min(holdbest);

@@ -1,9 +1,9 @@
 function thislike = corerreg_neglnlikelihood(parm,corrtscon,corrtsinc,errrtscon,errrtsinc,varargin)
     % Compute likelihood of congruent/incongruent parm correct/error RTs as f(parameters in parm).
     % This version uses a single SigmaC.
-    % Note using abs() of TauA, TauB, MuC, SigmaC but not Lambda's, and
+    % Note: Use abs() of TauA, TauB, MuC, SigmaC but not Lambda's, and
     %    transform PCsup, PCexc, PCinh into 0-1 scale.
-    % Note parm can have 8 or 9 parameters:
+    % Note: parm can have 8 or 9 parameters:
     %   if 8: TauA, TauB, MuC, SigmaC, LambdaInh, PCsup, PCexc, PCinh  (assume lambdaExc=0)
     %   if 9: TauA, TauB, MuC, SigmaC, LambdaExc, LambdaInh, PCsup, PCexc, PCinh
     % If LambdaExc is used, negative values mean that there is facilitation (speeding) of RT
@@ -32,9 +32,14 @@ function thislike = corerreg_neglnlikelihood(parm,corrtscon,corrtsinc,errrtscon,
         LambdaInh = parm(5);
         RTparms = 5;
     end
-    PCsup = maprto01(parm(RTparms+1));  % A wins so there is no exc or inhib
-    PCexc = maprto01(parm(RTparms+2));      % B wins on a congruent trial
-    PCinh = maprto01(parm(RTparms+3));    % B wins on an incongruent trial
+    PCsup = maprto01(parm(RTparms+1));   % Pr(cor|A wins), so there is no exc or inhib
+    PCexc = maprto01(parm(RTparms+2));   % Pr(cor|B wins) on a congruent trial
+    PCinh = maprto01(parm(RTparms+3));   % Pr(cor|B wins) wins on an incongruent trial
+    
+%     Nconcor = numel(corrtscon);
+%     Ninccor = numel(corrtsinc);
+%     Nconerr = numel(errrtscon);
+%     Nincerr = numel(errrtsinc);
     
     A = ExponenMn(TauA);
     if SOA==0
@@ -42,35 +47,41 @@ function thislike = corerreg_neglnlikelihood(parm,corrtscon,corrtsinc,errrtscon,
     else
         B = AddTrans(ExponenMn(TauB),SOA);
     end
-    PrExc = PrXGTY(A,B);  % This is Pr(Bwins)
+    PrBwins = PrXGTY(A,B);
+    PrAwins = 1 - PrBwins;
     BifWinner = ConditXLTY(B,A);
     BifLoser  = ConditXGTY(B,A);
     
-    Cwithout = Normal(MuC,SigmaC);  % Post-perceptual controlled processing time with no effect of A
+    C_Awins = Normal(MuC,SigmaC);             % Post-perceptual controlled processing time with no effect of A
     CwithExc = Normal(MuC+LambdaExc,SigmaC);  % Post-perceptual controlled processing time with excitation from A
     CwithInh = Normal(MuC+LambdaInh,SigmaC);  % Post-perceptual controlled processing time with inhibition from A
     
-    RTwithout = Convolution(Cwithout,BifLoser);  % Faster reversing order of C and B
+    RT_Awins = Convolution(C_Awins,BifLoser);     % Faster reversing order of C and B
     RTwithExc = Convolution(CwithExc,BifWinner);  % Faster reversing order of C and B
     RTwithInh = Convolution(CwithInh,BifWinner);  % Faster reversing order of C and B
     
-    pdfwithoutcorrtscon = RTwithout.PDF(corrtscon);
+    pdf_Awinscorrtscon = RT_Awins.PDF(corrtscon);
     pdfwithcorrtscon = RTwithExc.PDF(corrtscon);
-    corpdfscon = pdfwithoutcorrtscon .* (1-PrExc) * PCsup + pdfwithcorrtscon .* PrExc * PCexc;
+    corpdfscon = pdf_Awinscorrtscon .* PrAwins * PCsup + pdfwithcorrtscon .* PrBwins * PCexc;
     
-    pdfwithouterrrtscon = RTwithout.PDF(errrtscon);
+    pdf_Awinserrrtscon = RT_Awins.PDF(errrtscon);
     pdfwitherrrtscon = RTwithExc.PDF(errrtscon);
-    errpdfscon = pdfwithouterrrtscon .* (1-PrExc) * (1 - PCsup) + pdfwitherrrtscon .* PrExc * (1 - PCexc);
+    errpdfscon = pdf_Awinserrrtscon .* PrAwins * (1 - PCsup) + pdfwitherrrtscon .* PrBwins * (1 - PCexc);
     
-    pdfwithoutcorrtsinc = RTwithout.PDF(corrtsinc);
+    pdf_Awinscorrtsinc = RT_Awins.PDF(corrtsinc);
     pdfwithcorrtsinc = RTwithInh.PDF(corrtsinc);
-    corpdfsinc = pdfwithoutcorrtsinc .* (1-PrExc) * PCsup + pdfwithcorrtsinc .* PrExc * PCinh;
+    corpdfsinc = pdf_Awinscorrtsinc .* PrAwins * PCsup + pdfwithcorrtsinc .* PrBwins * PCinh;
     
-    pdfwithouterrrtsinc = RTwithout.PDF(errrtsinc);
+    pdf_Awinserrrtsinc = RT_Awins.PDF(errrtsinc);
     pdfwitherrrtsinc = RTwithInh.PDF(errrtsinc);
-    errpdfsinc = pdfwithouterrrtsinc .* (1-PrExc) * (1 - PCsup) + pdfwitherrrtsinc .* PrExc * (1 - PCinh);
+    errpdfsinc = pdf_Awinserrrtsinc .* PrAwins * (1 - PCsup) + pdfwitherrrtsinc .* PrBwins * (1 - PCinh);
     
-    thislike = -sum(log(corpdfscon)) - sum(log(corpdfsinc)) - sum(log(errpdfscon)) - sum(log(errpdfsinc));
+    thislike = -(sum(log(corpdfscon)) + sum(log(corpdfsinc)) + sum(log(errpdfscon)) + sum(log(errpdfsinc)));
+    
+%     PCcon = PCsup*PrAwins + PCexc*PrBwins;
+%     PCinc = PCsup*PrAwins + PCinh*PrBwins;
+% 
+%     thislike = -thislike - Nconcor*log(PCcon) - Nconerr*log(1-PCcon) - Ninccor*log(PCinc) - Nincerr*log(1-PCinc);
 %     [thislike TauA TauB MuC SigmaC LambdaInh PCsup PCexc PCinh]
 end
 

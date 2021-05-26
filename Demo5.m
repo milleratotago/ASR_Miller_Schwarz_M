@@ -19,7 +19,7 @@ PCinh = 0.80;    % Prob correct, incongruent trials, B wins so inhibition (i.e.,
 SOA =  0;
 
 % Generate some simulated RTs with the above parameters:
-nRTs = 500;
+nRTs = 5000;
 [rtscon, errcodescon] = simRTs(nRTs, TauA,TauB,[MuC, MuC+LambdaExc],[SigmaC SigmaC],SOA, [PCsup, PCexc]);
 [rtsinc, errcodesinc] = simRTs(nRTs, TauA,TauB,[MuC, MuC+LambdaInh],[SigmaC SigmaC],SOA, [PCsup, PCinh]);
 
@@ -29,11 +29,28 @@ corrtsinc = rtsinc(~errcodesinc);
 errrtscon = rtscon( errcodescon);
 errrtsinc = rtsinc( errcodesinc);
 
+options = optimset('Display','iter','TolX',0.01,'TolFun',0.01);
 
 %% Here is the parameter estimation:
+startparms = [TauA, TauB, MuC, SigmaC, LambdaInh, map01tor(PCsup), map01tor(PCexc), map01tor(PCinh) ];
 errfun = @(x) corerreg_neglnlikelihood(x,corrtscon,corrtsinc,errrtscon,errrtsinc);
-options = optimset('Display','iter');
-[holdparms, holdbest] = fminsearch(errfun,parm,options);
+[holdparms, holdbest] = fminsearch(errfun,startparms,options);
+
+% Redo with more errors to check if the parameters change appropriately:
+
+errcodescon = rand(size(errcodescon)) < 0.15;
+errcodesinc = rand(size(errcodesinc)) < 0.25;
+
+corrtscon = rtscon(~errcodescon);
+corrtsinc = rtsinc(~errcodesinc);
+errrtscon = rtscon( errcodescon);
+errrtsinc = rtsinc( errcodesinc);
+
+startparms = [TauA, TauB, MuC, SigmaC, LambdaInh, map01tor(PCsup), map01tor(PCexc), map01tor(PCinh) ];
+errfun = @(x) corerreg_neglnlikelihood(x,corrtscon,corrtsinc,errrtscon,errrtsinc);
+[holdparmsErr, holdbestErr] = fminsearch(errfun,startparms,options);
+
+return
 
 %% Here is a more sophisticated routine analogous to asr_fit:
 
