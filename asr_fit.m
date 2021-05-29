@@ -67,12 +67,12 @@ function results = asr_fit(congruent_rts,incongruent_rts,soa,varargin)
     
     % define the error function for fminsearch to minimize
     if TwoSigmas
-        errfun = @(x) eg_neglnlikelihood2sigmas(x,congruent_rts,incongruent_rts,soa);
+        errfun = @(x) asr_error2sigmas(x,congruent_rts,incongruent_rts,soa);
     else
-        errfun = @(x) eg_neglnlikelihood(x,congruent_rts,incongruent_rts,soa);
+        errfun = @(x) asr_error(x,congruent_rts,incongruent_rts,soa);
     end
     
-    % run fminsearch with different sets of starting parameters.
+    % Run fminsearch with different sets of starting proportions of RT variance in exponentials.
     for iTry=1:nTries
         % get some guesses for starting parameters:
         TauA = sigmaProps(iTry) * grandsd;
@@ -96,9 +96,9 @@ function results = asr_fit(congruent_rts,incongruent_rts,soa,varargin)
         else
             [holdparms(iTry,:), holdbest(iTry)] = fminsearch(errfun,startparms);
         end
-    end
+    end % nTries (starting proportions of RT variance in exponentials)
     
-    % eg_neglnlikelihood uses abs() of these parms:
+    % asr_error uses abs() of these parms:
     holdparms(:,1) = abs(holdparms(:,1));  % tauA
     holdparms(:,2) = abs(holdparms(:,2));  % tauB
     holdparms(:,3) = abs(holdparms(:,3));  % mu

@@ -1,4 +1,4 @@
-function thislike = eg_neglnlikelihoodCVC(x,rtscon,rtsinc,varargin)
+function thislike = asr_errorCVC(x,rtscon,rtsinc,varargin)
     % Compute likelihood of congruent & incongruent RTs as f(parameters in x).
     % This version uses a single stage C _coefficient of variance parameter CVC.
     % Note using abs() of TauA, TauB, MuC, CVC but not Lambda's
@@ -25,8 +25,10 @@ function thislike = eg_neglnlikelihoodCVC(x,rtscon,rtsinc,varargin)
     SigmaC = MuC*CVC;
     SigmaCexc = (MuC+LambdaExc)*CVC;
     SigmaCinh = (MuC+LambdaInh)*CVC;
-    pdfscon = f_con_or_inc2sigmas(TauA,TauB,MuC,SigmaC,LambdaExc,SigmaCexc,rtscon,SOA);
-    pdfsinc = f_con_or_inc2sigmas(TauA,TauB,MuC,SigmaC,LambdaInh,SigmaCinh,rtsinc,SOA);
+    Alpha = 1/TauA;
+    Beta = 1/TauB;
+    pdfscon = f_rt(rtscon,Alpha,Beta,MuC,SigmaC,LambdaExc,SigmaCexc,SOA);
+    pdfsinc = f_rt(rtsinc,Alpha,Beta,MuC,SigmaC,LambdaInh,SigmaCinh,SOA);
     thislike = -sum(log(pdfscon)) - sum(log(pdfsinc));
 end
 

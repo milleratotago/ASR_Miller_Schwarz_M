@@ -70,9 +70,9 @@ function results = asr_fit_corerr(corcongruent_rts,corincongruent_rts,errcongrue
     
     % define the error function for fminsearch to minimize
     if TwoSigmas
-        errfun = @(x) corerreg_neglnlikelihood2sigmas(x,corcongruent_rts,corincongruent_rts,errcongruent_rts,errincongruent_rts,soa);  % NOT YET SUPPORTED
+        errfun = @(x) asr_errorCorErr2sigmas(x,corcongruent_rts,corincongruent_rts,errcongruent_rts,errincongruent_rts,soa);  % NOT YET SUPPORTED
     else
-        errfun = @(x) corerreg_neglnlikelihood(x,corcongruent_rts,corincongruent_rts,errcongruent_rts,errincongruent_rts,soa);
+        errfun = @(x) asr_errorCorErr(x,corcongruent_rts,corincongruent_rts,errcongruent_rts,errincongruent_rts,soa);
     end
 
     % Get starting values for PC parameters (I am just guessing here):
@@ -112,7 +112,7 @@ function results = asr_fit_corerr(corcongruent_rts,corincongruent_rts,errcongrue
         end
     end
     
-    % eg_neglnlikelihood uses abs() of these parms:
+    % asr_error uses abs() of these parms:
     holdparms(:,1) = abs(holdparms(:,1));  % tauA
     holdparms(:,2) = abs(holdparms(:,2));  % tauB
     holdparms(:,3) = abs(holdparms(:,3));  % mu

@@ -1,4 +1,4 @@
-function thislike = eg_neglnlikelihood(x,rtscon,rtsinc,varargin)
+function thislike = asr_error(x,rtscon,rtsinc,varargin)
     % Compute likelihood of congruent & incongruent RTs as f(parameters in x).
     % This version uses a single SigmaC.
     % Note using abs() of TauA, TauB, MuC, SigmaC but not Lambda's
@@ -22,8 +22,10 @@ function thislike = eg_neglnlikelihood(x,rtscon,rtsinc,varargin)
         LambdaExc = 0;
         LambdaInh = x(5);
     end
-    pdfscon = f_con_or_inc(TauA,TauB,MuC,SigmaC,LambdaExc,rtscon,SOA);
-    pdfsinc = f_con_or_inc(TauA,TauB,MuC,SigmaC,LambdaInh,rtsinc,SOA);
+    Alpha = 1/TauA;
+    Beta = 1/TauB;
+    pdfscon = f_rt(rtscon,Alpha,Beta,MuC,SigmaC,LambdaExc,SigmaC,SOA);
+    pdfsinc = f_rt(rtsinc,Alpha,Beta,MuC,SigmaC,LambdaInh,SigmaC,SOA);
     thislike = -sum(log(pdfscon)) - sum(log(pdfsinc));
 end
 

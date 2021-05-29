@@ -1,5 +1,5 @@
 % Demo of fitting both RTs and errors by minimizing the function
-% corerreg_neglnlikelihood(parm,corrtscon,corrtsinc,errrtscon,errrtsinc,varargin)
+% asr_errorCorErr(parm,corrtscon,corrtsinc,errrtscon,errrtsinc,varargin)
 %
 % Warning: This is quite slow!
 
@@ -33,7 +33,7 @@ options = optimset('Display','iter','TolX',0.01,'TolFun',0.01);
 
 %% Here is the parameter estimation:
 startparms = [TauA, TauB, MuC, SigmaC, LambdaInh, map01tor(PCsup), map01tor(PCexc), map01tor(PCinh) ];
-errfun = @(x) corerreg_neglnlikelihood(x,corrtscon,corrtsinc,errrtscon,errrtsinc);
+errfun = @(x) asr_errorCorErr(x,corrtscon,corrtsinc,errrtscon,errrtsinc);
 [holdparms, holdbest] = fminsearch(errfun,startparms,options);
 
 % Redo with more errors to check if the parameters change appropriately:
@@ -47,7 +47,7 @@ errrtscon = rtscon( errcodescon);
 errrtsinc = rtsinc( errcodesinc);
 
 startparms = [TauA, TauB, MuC, SigmaC, LambdaInh, map01tor(PCsup), map01tor(PCexc), map01tor(PCinh) ];
-errfun = @(x) corerreg_neglnlikelihood(x,corrtscon,corrtsinc,errrtscon,errrtsinc);
+errfun = @(x) asr_errorCorErr(x,corrtscon,corrtsinc,errrtscon,errrtsinc);
 [holdparmsErr, holdbestErr] = fminsearch(errfun,startparms,options);
 
 return

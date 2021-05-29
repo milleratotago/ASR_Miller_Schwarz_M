@@ -1,4 +1,4 @@
-function thislike = eg_neglnlikelihood2sigmas(x,rtscon,rtsinc,varargin)
+function thislike = asr_error2sigmas(x,rtscon,rtsinc,varargin)
     % Compute likelihood of congruent & incongruent RTs as f(parameters in x).
     % This version uses two SigmaC's for each condition.
     % Note x can have 6 or 8 parameters:
@@ -28,8 +28,10 @@ function thislike = eg_neglnlikelihood2sigmas(x,rtscon,rtsinc,varargin)
     else
         error('Wrong number of parameters');
     end
-    pdfscon = f_con_or_inc2sigmas(TauA,TauB,MuC,SigmaC,LambdaExc,SigmaCexc,rtscon,SOA);
-    pdfsinc = f_con_or_inc2sigmas(TauA,TauB,MuC,SigmaC,LambdaInh,SigmaCinh,rtsinc,SOA);
+    Alpha = 1/TauA;
+    Beta = 1/TauB;
+    pdfscon = f_rt(rtscon,Alpha,Beta,MuC,SigmaC,LambdaExc,SigmaCexc,SOA);
+    pdfsinc = f_rt(rtsinc,Alpha,Beta,MuC,SigmaC,LambdaInh,SigmaCinh,SOA);
     thislike = -sum(log(pdfscon)) - sum(log(pdfsinc));
 end
 

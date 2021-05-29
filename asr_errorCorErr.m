@@ -1,4 +1,4 @@
-function thislike = corerreg_neglnlikelihood(parm,corrtscon,corrtsinc,errrtscon,errrtsinc,varargin)
+function thislike = asr_errorCorErr(parm,corrtscon,corrtsinc,errrtscon,errrtsinc,varargin)
     % Compute likelihood of congruent/incongruent parm correct/error RTs as f(parameters in parm).
     % This version uses a single SigmaC.
     % Note: Use abs() of TauA, TauB, MuC, SigmaC but not Lambda's, and
