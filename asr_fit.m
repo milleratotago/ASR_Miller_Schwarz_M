@@ -53,7 +53,6 @@ function results = asr_fit(congruent_rts,incongruent_rts,soa,varargin)
         nParms = 5;  % TauA, TauB, MuC, SigmaC, LambdaInh
     end
     
-    
     % Initialize arrays to hold results of multiple fminsearch's
     nTries = numel(sigmaProps);  % Number of times to run fminsearch with different starting values.
     holdparms = zeros(nTries,nParms);
@@ -67,9 +66,9 @@ function results = asr_fit(congruent_rts,incongruent_rts,soa,varargin)
     
     % define the error function for fminsearch to minimize
     if TwoSigmas
-        errfun = @(x) asr_error2sigmas(x,congruent_rts,incongruent_rts,soa);
+        errfun = @(x) asr_error1or2sigmas(x,congruent_rts,incongruent_rts,soa,true);
     else
-        errfun = @(x) asr_error(x,congruent_rts,incongruent_rts,soa);
+        errfun = @(x) asr_error1or2sigmas(x,congruent_rts,incongruent_rts,soa,false);
     end
     
     % Run fminsearch with different sets of starting proportions of RT variance in exponentials.
