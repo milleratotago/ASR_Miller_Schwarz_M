@@ -33,7 +33,7 @@ function thislike = asr_error1or2sigmas(parm,rtscon,rtsinc,SOA,TwoSigmas)
             LambdaInh = parm(7);
             SigmaCinh = abs(parm(8));
         else
-            error('Wrong number of parameters with TwoSigmas true.');
+            error('Wrong number of parameters: asr_error1or2sigmas requires exactly 6 or 8 parameters when TwoSigmas is true.');
         end
     else
         % One Sigma
@@ -46,7 +46,7 @@ function thislike = asr_error1or2sigmas(parm,rtscon,rtsinc,SOA,TwoSigmas)
             LambdaExc = 0;
             LambdaInh = parm(5);
         else
-            error('Wrong number of parameters with TwoSigmas false.');
+            error('Wrong number of parameters: asr_error1or2sigmas requires exactly 5 or 6 parameters when TwoSigmas is false.');
         end
     end
     
